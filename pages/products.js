@@ -7,7 +7,6 @@ export default function Products(){
     const [products, setProducts] = useState([]);
     useEffect(()=>{
         axios.get('/api/products').then(res=>{
-            console.log(res);
             setProducts(res.data);
         })
     },[])
@@ -36,7 +35,9 @@ export default function Products(){
                     {products.map(product => (
                         <tr>
                             <td>{product.title}</td>
-                            <td className="w-15">${product.price}</td>
+                            <td className="w-15">
+                                <span className="bg-green-400 p-1 mr-1 rounded text-white font-bold">$</span>{product.price}
+                            </td>
                             <td className="min-w-[120px]">
                                 <Link href={'/products/edit/'+product._id} className="edit">
                                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4 h-4">
