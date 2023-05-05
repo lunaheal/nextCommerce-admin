@@ -2,9 +2,12 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import multiparty from 'multiparty';
 import fs from 'fs';
 import mime from 'mime-types';
-// const bucketName = 'lunaheo';
 
 export default async function handle(req, res){
+    const bucketName = process.env.BUCKET_NAME;
+    const region = process.env.S3_REGION;
+    const accessKey = process.env.S3_ACCESS_KEY;
+    const secretAccessKey = process.env.S3_SECRET_ACCESS_KEY;
     const form = new multiparty.Form();
     const {fields, files} = await new Promise((resolve, reject) => {
         form.parse(req, (err, fields, files) => {
@@ -14,10 +17,10 @@ export default async function handle(req, res){
     });
     console.log('length:',files.file.length);
     const client = new S3Client({
-        region: 'ap-southeast-1',
+        region: region,
         credentials: {
-            accessKeyId: process.env.S3_ACCESS_KEY,
-            secretAccessKey: process.env.S3_SECRET_ACCESS_KEY
+            accessKeyId: accessKey,
+            secretAccessKey: secretAccessKey
         }
     });
     const links = []
@@ -25,7 +28,7 @@ export default async function handle(req, res){
         const ext = file.originalFilename.split('.').pop();
         const newFilename = Date.now() + '.' + ext;
         await client.send(new PutObjectCommand({
-            Bucket: process.env.BUCKET_NAME,
+            Bucket: bucketName,
             Key: newFilename,
             Body: fs.readFileSync(file.path),
             ACL: 'public-read',

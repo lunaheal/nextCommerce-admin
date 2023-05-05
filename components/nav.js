@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { NavItem } from "./constant";
 import { useEffect, useState} from "react";
 import useLocalStorage from "./hooks/useLocalStorage";
-
+import parse from 'html-react-parser';
 
 export default function Nav() {
     const inactiveLink = 'flex gap-2 mb-1 p-3 pr-5';
@@ -28,7 +28,7 @@ export default function Nav() {
                         key={index}
                         href={item.route}
                         className = {(pathname === item.route || (pathname.includes(item.route) && item.route !== '/') ? activeLink : inactiveLink) + ' hover:text-blue-400'}>
-                        {item.icon()}
+                            {parse(item.icon)}
                             <span className={navVisible || 'hidden'}>{item.title}</span>
                     </Link>
                 )}

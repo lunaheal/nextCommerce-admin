@@ -12,7 +12,7 @@ input:focus, textarea:focus{
 }
 
 h1{
-    @apply text-blue-900 mb-2 text-xl font-bold
+    @apply text-blue-900 text-xl font-bold;
 }
 
 label{
@@ -62,11 +62,11 @@ table.basic tr td{
 }
 
 table.basic a.edit{
-    @apply bg-yellow-700 text-white text-sm rounded-md py-1 px-2 inline-flex gap-1 mr-1;
+    @apply bg-yellow-700 text-white text-sm rounded-md py-1 px-2 inline-flex gap-1 mr-1 items-center;
     &:hover{@apply bg-yellow-800;}
 }
 
 table.basic a.delete{
-    @apply bg-red-700 text-white text-sm rounded-md py-1 px-2 inline-flex gap-1 mr-1;
+    @apply bg-red-700 text-white text-sm rounded-md py-1 px-2 inline-flex gap-1 mr-1 items-center;
     &:hover{@apply bg-red-800;}
 }

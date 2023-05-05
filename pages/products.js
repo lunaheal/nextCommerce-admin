@@ -48,7 +48,7 @@ export default function Products(){
                         </tr>
                     )}
                     {products.map(product => (
-                        <tr>
+                        <tr key={product._id}>
                             <td>{product.title}</td>
                             <td className="w-15">
                                 <span className="bg-green-400 p-1 mr-1 rounded text-white font-bold">$</span>{product.price}

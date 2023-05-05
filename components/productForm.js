@@ -2,6 +2,7 @@ import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { ClipLoader } from "react-spinners";
 
 export default function ProductForm(
     {   
@@ -12,12 +13,14 @@ export default function ProductForm(
         images: existingImages,
     }
     ) {
+    // ----- Data handle -----
     const [title, setTitle] = useState(existingTitle || '');
     const [description, setDescription] = useState(existingDescription || '');
     const [price, setPrice] = useState(existingPrice || '');
-    const [goToProducts, setGoToProducts] = useState(false);
     const [images, setImages] = useState(existingImages || []);
+    
     const [isUploading, setIsUploading] = useState(false);
+    const [goToProducts, setGoToProducts] = useState(false);
     const router = useRouter();
     function clearImage(ev){
         ev.preventDefault();
@@ -28,10 +31,10 @@ export default function ProductForm(
         ev.preventDefault();
         const data = {title,description,price,images};
         if(_id) {
-            //update
+            // Update existing data
             await axios.put('/api/products', {...data, _id})
         } else {
-            //create
+            // Create new data
             await axios.post('/api/products', data);
         }
         setGoToProducts(true);
@@ -49,7 +52,7 @@ export default function ProductForm(
             setImages(oldImages => {
                 return [...oldImages, ...res.data.links]
             })
-            goBack();
+            setIsUploading(false);
         }
     }
     function goBack(){
@@ -57,6 +60,7 @@ export default function ProductForm(
     }
     return (
         <form onSubmit={saveProduct} action="">
+            
             <label htmlFor="">Product name</label>
             <input 
                 type="text"
@@ -66,16 +70,28 @@ export default function ProductForm(
             <label>Photos</label>
             <div className="flex flex-wrap mb-2 gap-2">
                 {!!images?.length && images.map(link => (
-                        <div key={link} className="">
+                        <div key={link}>
                             <Image src={link} width={100} height={100} className="w-24 h-24 object-cover rounded border" alt="productPicture"></Image>
                         </div>
                     ))}
-                <label className="bg-gray-200 hover:bg-gray-300 relative w-24 h-24  cursor-pointer flex flex-col justify-center items-center gap-1 text-sm text-gray-600 rounded overflow-hidden">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-                        <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" />
-                    </svg>
-                    Upload
-                    <input type="file" className="hidden" onChange={uploadImages}/>
+                <label className={"bg-gray-200 hover:bg-gray-300 relative w-24 h-24 cursor-pointer rounded"+(isUploading?' bg-lime-100 hover:bg-lime-200':'')}>
+                    {isUploading
+                        ? (
+                            <div className="flex flex-col justify-center items-center gap-1 text-sm text-gray-600 h-full">
+                                <ClipLoader color='#a3e635' loading={true} size={20} ariaLabel="Loading Spinner" dataTestid="loader" className="w-24 h-24"/>
+                                <span>Uploading</span>
+                            </div>
+                        )
+                        : (
+                            <div className="flex flex-col justify-center items-center gap-1 text-sm text-gray-600 h-full">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" />
+                                </svg>
+                                <span>Upload</span>
+                            </div>
+                    )
+                    }
+                    <input type="file" className="hidden" onChange={uploadImages} disabled={isUploading} />
                 </label>
                 {
                     !images?.length && <div className="mb-1">No photos in this products</div>
@@ -89,7 +105,7 @@ export default function ProductForm(
                 onChange={ev=>setDescription(ev.target.value)}></textarea>
             <label htmlFor="">Price (in USD)</label>
             <input 
-                type="text"
+                type="number"
                 placeholder="Product price"
                 value={price}
                 onChange={ev=>setPrice(ev.target.value)}/>
