@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { ClipLoader } from "react-spinners";
-
+import { ReactSortable } from "react-sortablejs";
 export default function ProductForm(
     {   
         _id,
@@ -18,7 +18,6 @@ export default function ProductForm(
     const [description, setDescription] = useState(existingDescription || '');
     const [price, setPrice] = useState(existingPrice || '');
     const [images, setImages] = useState(existingImages || []);
-    
     const [isUploading, setIsUploading] = useState(false);
     const [goToProducts, setGoToProducts] = useState(false);
     const router = useRouter();
@@ -58,10 +57,12 @@ export default function ProductForm(
     function goBack(){
         setGoToProducts(true);
     }
+    function updateImagesOrder(images){
+        setImages(images);
+    }
     return (
         <form onSubmit={saveProduct} action="">
-            
-            <label htmlFor="">Product name</label>
+            <label >Product name</label>
             <input 
                 type="text"
                 placeholder="Product name"
@@ -69,16 +70,17 @@ export default function ProductForm(
                 onChange={ev=>setTitle(ev.target.value)}/>
             <label>Photos</label>
             <div className="flex flex-wrap mb-2 gap-2">
-                {!!images?.length && images.map(link => (
-                        <div key={link}>
-                            <Image src={link} width={100} height={100} className="w-24 h-24 object-cover rounded border" alt="productPicture"></Image>
-                        </div>
-                    ))}
+                <ReactSortable className="flex flex-wrap gap-1" list={images} setList={updateImagesOrder}>
+                    {!!images?.length && images.map(link => {
+                        link = link.toString();
+                        return <Image key={link} src={link} width={100} height={100} className="w-24 h-24 object-cover rounded border" alt="productPicture"></Image>
+                    })}
+                </ReactSortable>
                 <label className={"bg-gray-200 hover:bg-gray-300 relative w-24 h-24 cursor-pointer rounded"+(isUploading?' bg-lime-100 hover:bg-lime-200':'')}>
                     {isUploading
                         ? (
                             <div className="flex flex-col justify-center items-center gap-1 text-sm text-gray-600 h-full">
-                                <ClipLoader color='#a3e635' loading={true} size={20} ariaLabel="Loading Spinner" dataTestid="loader" className="w-24 h-24"/>
+                                <ClipLoader color='#a3e635' loading={true} size={20} className="w-24 h-24"/>
                                 <span>Uploading</span>
                             </div>
                         )
@@ -94,16 +96,16 @@ export default function ProductForm(
                     <input type="file" className="hidden" onChange={uploadImages} disabled={isUploading} />
                 </label>
                 {
-                    !images?.length && <div className="mb-1">No photos in this products</div>
+                    (!images?.length && isUploading) && <div className="mb-1">No photos in this products</div>
                 }
             </div>
-            <label htmlFor="">Description</label>
+            <label >Description</label>
             <textarea 
                 name="" id="" cols="30" rows="10"
                 placeholder="Product description"
                 value={description}
                 onChange={ev=>setDescription(ev.target.value)}></textarea>
-            <label htmlFor="">Price (in USD)</label>
+            <label >Price (in USD)</label>
             <input 
                 type="number"
                 placeholder="Product price"
