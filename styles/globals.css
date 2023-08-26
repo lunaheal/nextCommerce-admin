@@ -2,12 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
-input, textarea{
+input, textarea, select{
     @apply border-2 border-gray-300 rounded-md px-1 w-full;
     @apply mb-2;
 }
 
-input:focus, textarea:focus{
+input:focus, textarea:focus, select:focus{
     @apply border-blue-900;
 }
 
@@ -61,12 +61,12 @@ table.basic tr td{
     @apply border border-gray-300 px-2 py-1;
 }
 
-table.basic a.edit{
+table.basic .edit{
     @apply bg-yellow-700 text-white text-sm rounded-md py-1 px-2 inline-flex gap-1 mr-1 items-center;
     &:hover{@apply bg-yellow-800;}
 }
 
-table.basic a.delete{
+table.basic .delete{
     @apply bg-red-700 text-white text-sm rounded-md py-1 px-2 inline-flex gap-1 mr-1 items-center;
     &:hover{@apply bg-red-800;}
 }

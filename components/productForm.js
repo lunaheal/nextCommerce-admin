@@ -1,9 +1,11 @@
 import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
 import { ReactSortable } from "react-sortablejs";
+import result from "autoprefixer/data/prefixes";
+import { toUpperCaseFirst } from "./constant";
 export default function ProductForm(
     {   
         _id,
@@ -11,15 +13,25 @@ export default function ProductForm(
         description: existingDescription,
         price: existingPrice,
         images: existingImages,
+        category: existingCategory,
     }
     ) {
     // ----- Data handle -----
+    useEffect(()=>{
+        axios.get('/api/categories').then(result => {
+            console.log(result.data)
+            setCategories(result.data);
+        })
+    },[])
     const [title, setTitle] = useState(existingTitle || '');
+    const [category, setCategory] = useState(existingCategory || '');
+    const [categories, setCategories] = useState([]);
     const [description, setDescription] = useState(existingDescription || '');
     const [price, setPrice] = useState(existingPrice || '');
     const [images, setImages] = useState(existingImages || []);
+
+    // ----- UI handle -----
     const [isUploading, setIsUploading] = useState(false);
-    const [goToProducts, setGoToProducts] = useState(false);
     const router = useRouter();
     function clearImage(ev){
         ev.preventDefault();
@@ -28,7 +40,7 @@ export default function ProductForm(
     }
     async function saveProduct(ev){
         ev.preventDefault();
-        const data = {title,description,price,images};
+        const data = {title,description,price,images, category};
         if(_id) {
             // Update existing data
             await axios.put('/api/products', {...data, _id})
@@ -36,9 +48,8 @@ export default function ProductForm(
             // Create new data
             await axios.post('/api/products', data);
         }
-        setGoToProducts(true);
+        router.push('/products');
     }
-    if(goToProducts) router.push('/products');
     async function uploadImages(ev){
         const files = ev.target?.files;
         if (files?.length > 0) {
@@ -60,6 +71,17 @@ export default function ProductForm(
     function updateImagesOrder(images){
         setImages(images);
     }
+
+    let propertiesToFill = [];
+    if (categories.length > 0 && category){
+        let catInfo = categories.find(({_id}) => _id === category)
+        propertiesToFill.push(...catInfo.properties);
+        while(catInfo?.parent?._id){
+            const parentCategory = categories.find(({_id}) => _id === catInfo?.parent?._id)
+            propertiesToFill.push(...parentCategory.properties)
+            catInfo = parentCategory;
+        }
+    }
     return (
         <form onSubmit={saveProduct} action="">
             <label >Product name</label>
@@ -68,14 +90,26 @@ export default function ProductForm(
                 placeholder="Product name"
                 value={title}
                 onChange={ev=>setTitle(ev.target.value)}/>
+            <label>Category</label>
+            <select value={category} onChange={ev => setCategory(ev.target.value)}>
+                <option value=''>Uncategorized</option>
+                {categories.length > 0 && categories.map((c, i) => (
+                    <option key={i} value={c._id}>{c.name}</option>
+                ))}
+            </select>
+            {propertiesToFill.length > 0 && propertiesToFill.map((p,i)=>(
+                <div key={i}>
+                    {toUpperCaseFirst(p.name)}
+                </div>
+            ))}
             <label>Photos</label>
             <div className="flex flex-wrap mb-2 gap-2">
-                <ReactSortable className="flex flex-wrap gap-1" list={images} setList={updateImagesOrder}>
+                {/* <ReactSortable className="flex flex-wrap gap-1" list={images} setList={updateImagesOrder}>
                     {!!images?.length && images.map(link => {
                         link = link.toString();
                         return <Image key={link} src={link} width={100} height={100} className="w-24 h-24 object-cover rounded border" alt="productPicture"></Image>
                     })}
-                </ReactSortable>
+                </ReactSortable> */}
                 <label className={"bg-gray-200 hover:bg-gray-300 relative w-24 h-24 cursor-pointer rounded"+(isUploading?' bg-lime-100 hover:bg-lime-200':'')}>
                     {isUploading
                         ? (

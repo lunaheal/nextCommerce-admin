@@ -29,7 +29,7 @@ export default function Nav() {
                         href={item.route}
                         className = {(pathname === item.route || (pathname.includes(item.route) && item.route !== '/') ? activeLink : inactiveLink) + ' hover:text-blue-400'}>
                             {parse(item.icon)}
-                            <span className={navVisible || 'hidden'}>{item.title}</span>
+                            <span className={navVisible ? '' : 'hidden'}>{item.title}</span>
                     </Link>
                 )}
                 <button className={inactiveLink} onClick={showHideNav}>
@@ -39,7 +39,7 @@ export default function Nav() {
                                 : <path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
                         }
                     </svg>
-                    <span className={navVisible || 'hidden'}>Collapse</span>
+                    <span className={navVisible ? '' : 'hidden'}>Collapse</span>
                 </button>
                 {/* <Link href={'/'} className={pathname === '/' ? activeLink : inactiveLink}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
