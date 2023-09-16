@@ -2,8 +2,12 @@ import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import multiparty from 'multiparty';
 import fs from 'fs';
 import mime from 'mime-types';
+import { mongooseConnect } from '@/lib/mongoose';
+import { isAdminRequest } from './auth/[...nextauth]';
 
 export default async function handle(req, res){
+    await mongooseConnect();
+    await isAdminRequestuest(req,res);
     const bucketName = process.env.BUCKET_NAME;
     const region = process.env.S3_REGION;
     const accessKey = process.env.S3_ACCESS_KEY;

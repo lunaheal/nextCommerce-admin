@@ -1,60 +1,93 @@
 import ActionButton from "@/components/actionButton";
 import Layout from "@/components/layout";
+import TableSkeleton from "@/components/tableSkeleton";
 import axios from "axios";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import Skeleton, { SkeletonTheme } from "react-loading-skeleton";
 import 'react-loading-skeleton/dist/skeleton.css'
-import { ClipLoader } from "react-spinners";
 
 export default function Products(){
     const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     useEffect(()=>{
-        setIsLoading(true);
-        axios.get('/api/products').then(res=>{
-            setProducts(res.data);
-            setIsLoading(false);
-        })
+        fetchDB();
     },[])
+    async function fetchDB(){
+        setIsLoading(true);
+        await axios.get('/api/products').then(res=>{
+            setProducts(res.data);
+        })
+        await axios.get('/api/categories').then(res=>{
+            setCategories(res.data)
+        })
+        await setIsLoading(false)
+    }
+    function renderCategory(product){
+        if (categories.length > 0 && product.category){
+            let catInfo = categories.find(({_id}) => _id === product.category)
+            return catInfo?.name
+        } else {
+            return;
+        }
+    }
     return (
         <Layout>
             <div className="flex justify-between">
                 <h1>List Product</h1>
-                <Link href={'/products/new'} className="btn-success inline-flex">
+                <Link href={'/products/new'} className="btn-success px-2 inline-flex">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                     </svg>
                     <span>
-                        Add products
+                        Add <span className="hidden sm:inline">product</span>
                     </span>
                 </Link>
             </div>
             
+            <p className="w-min-content relative transition-all
+                before::absolute before::bottom-0 before::right-0
+                before::h-1 before::w-0 before::bg-blue-400
+                before::transition-all before::duration-500
+                hover:before::left-0 hover:before::w-full hover:before::bg-red-500">Underline</p>
+<div className="before:content-['hello\_world']">
+            <p
+  className="w-min-content relative transition-all
+                before::absolute before::bottom-0 before::right-0
+                before::h-1 before::w-0 before::bg-blue-400
+                before::transition-all before::duration-500
+                hover:before::left-0 hover:before::w-full hover:before::bg-red-500 content-before content-after content-hover-before background-hover-before"
+  tw-background-hover-before="bg-blue-50"
+  tw-content-before="🧡"
+  tw-content-hover-before="💖"
+  tw-content-after="💙️"
+>
+  Tailwind CSS
+</p>
+
+</div>
             {/* <ClipLoader color='#000000' loading={isLoading} size={20} aria-label="Loading Spinner" data-testId="loader" className=""></ClipLoader> */}
             <table className="basic mt-2">
                 <thead>
                     <tr>
-                        <td>Product name</td>
-                        <td>Price</td>
-                        <td className="min-w-[120px]">Actions</td>
+                        <td className="w-1/2">Product name</td>
+                        <td className="w-1/4">Cate name</td>
+                        <td className="">Price</td>
+                        <td></td>
                     </tr>
                 </thead>
                 <tbody>
-                    {[...Array(10)].map((e, i) => 
-                        <tr key={i} className={isLoading || 'hidden'}>
-                            <td><Skeleton /></td>
-                            <td><Skeleton /></td>
-                            <td><Skeleton /></td>
-                        </tr>
-                    )}
-                    {products.map(product => (
+                    <TableSkeleton row={10} column={4} loading={isLoading} />
+                    {(products.length > 0 && categories.length > 0) && products.map(product => (
                         <tr key={product._id}>
                             <td>{product.title}</td>
-                            <td className="w-15">
-                                <span className="bg-green-400 p-1 mr-1 rounded text-white font-bold">$</span>{product.price}
+                            <td>
+                                {renderCategory(product)}
                             </td>
-                            <td className="min-w-[120px]">
+                            <td className="">
+                                <span className="bg-yellow-400 p-1 mr-1 rounded text-white font-bold">$</span>{product.price}
+                            </td>
+                            <td className="text-right">
                                 <Link href={'/products/edit/'+product._id}>
                                     <ActionButton type='edit'>Edit</ActionButton>
                                 </Link>

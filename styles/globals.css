@@ -2,13 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-input, textarea, select{
-    @apply border-2 border-gray-300 rounded-md px-1 w-full;
-    @apply mb-2;
+nav  {
+    & button:focus{
+        outline: transparent;
+        border: 12px;
+    }
+    & a.activeLink{
+        @apply bg-white text-blue-900;
+        background: linear-gradient(white, white) padding-box, linear-gradient(220deg, rgb(255 255 255 / 0%) 0%, #9C27B0 35%, #03A9F4 100%) border-box;
+        border-width: 3px 3px 0px 3px;
+        border-color: transparent;
+        @media screen(sm){
+            border-width: 3px 0px 3px 3px;
+            background: linear-gradient(white, white) padding-box, linear-gradient(220deg, rgb(255 255 255 / 0%) 0%, #9C27B0 35%, #03A9F4 100%) border-box;
+        }
+    };
 }
 
-input:focus, textarea:focus, select:focus{
-    @apply border-blue-900;
+input, textarea, select{
+    @apply border border-gray-300 rounded bg-gray-50 px-2 py-1 w-full mb-2 shadow-sm;    
+}
+
+button:focus, input:focus, textarea:focus, select:focus,
+button:focus-within, input:focus-within, textarea:focus-within, select:focus-within{
+    @apply border-blue-900 outline-none;
 }
 
 h1{
@@ -17,6 +34,18 @@ h1{
 
 label{
     @apply text-blue-900;
+}
+
+.wrapper{
+    @apply flex;
+    background: linear-gradient(330deg, rgb(47 148 226) 0%, rgb(37 99 235) 35%, rgb(30 58 138) 100%);
+}
+
+.content{
+    @apply bg-white flex-grow m-0 p-4;
+    @media screen(sm){
+        @apply mt-2 mb-2 mr-2 rounded-lg
+    }
 }
 
 .btn{
@@ -33,40 +62,51 @@ label{
 
 .btn-sub{
     @apply btn bg-gray-400;
-    &:hover{@apply btn bg-gray-600;}
+    &:hover{@apply btn bg-gray-600;};
 }
 .btn-success{
     @apply btn bg-green-600;
-    &:hover{@apply bg-green-800;}
+    &:hover{@apply bg-green-800;};
 }
 
 .btn-danger{
     @apply btn bg-red-600;
-    &:hover{@apply bg-red-800;}
+    &:hover{@apply bg-red-800;};
+}
+
+.btn-warning{
+    @apply btn bg-yellow-600;
+    &:hover{@apply bg-yellow-800;};
 }
 
 .btn-default{
     @apply bg-gray-400 px-4 py-1 rounded-md;
 }
 
+table tbody tr{
+    @apply even:bg-gray-50;
+    &:hover{
+        @apply bg-blue-50;
+    };
+}
 table.basic{
-    @apply w-full;
+    @apply w-full table-auto rounded-sm shadow-sm;
 }
 
 table.basic thead tr td{
-    @apply bg-blue-200;
+    @apply bg-blue-200 text-sm text-gray-900 uppercase font-bold;
 }
 
 table.basic tr td{
-    @apply border border-gray-300 px-2 py-1;
+    @apply p-2;
 }
 
 table.basic .edit{
     @apply bg-yellow-700 text-white text-sm rounded-md py-1 px-2 inline-flex gap-1 mr-1 items-center;
-    &:hover{@apply bg-yellow-800;}
+    &:hover{@apply bg-yellow-800;};
 }
 
 table.basic .delete{
     @apply bg-red-700 text-white text-sm rounded-md py-1 px-2 inline-flex gap-1 mr-1 items-center;
-    &:hover{@apply bg-red-800;}
+    &:hover{@apply bg-red-800;};
 }

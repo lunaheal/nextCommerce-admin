@@ -36,5 +36,8 @@
     "sortablejs": "^1.15.0",
     "styled-jsx": "^5.1.2",
     "tailwindcss": "npm:@tailwindcss/postcss7-compat"
+  },
+  "devDependencies": {
+    "tailwindcss-pseudo-elements": "^2.0.0"
   }
 }

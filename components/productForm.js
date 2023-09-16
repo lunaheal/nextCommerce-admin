@@ -3,9 +3,8 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { ClipLoader } from "react-spinners";
-import { ReactSortable } from "react-sortablejs";
-import result from "autoprefixer/data/prefixes";
 import { toUpperCaseFirst } from "./constant";
+import { ReactSortable } from "react-sortablejs";
 export default function ProductForm(
     {   
         _id,
@@ -14,22 +13,22 @@ export default function ProductForm(
         price: existingPrice,
         images: existingImages,
         category: existingCategory,
+        properties: assignedProperties
     }
     ) {
     // ----- Data handle -----
     useEffect(()=>{
         axios.get('/api/categories').then(result => {
-            console.log(result.data)
             setCategories(result.data);
         })
     },[])
     const [title, setTitle] = useState(existingTitle || '');
     const [category, setCategory] = useState(existingCategory || '');
     const [categories, setCategories] = useState([]);
+    const [productProperties, setProductProperties] = useState(assignedProperties || {});
     const [description, setDescription] = useState(existingDescription || '');
     const [price, setPrice] = useState(existingPrice || '');
     const [images, setImages] = useState(existingImages || []);
-
     // ----- UI handle -----
     const [isUploading, setIsUploading] = useState(false);
     const router = useRouter();
@@ -40,7 +39,16 @@ export default function ProductForm(
     }
     async function saveProduct(ev){
         ev.preventDefault();
-        const data = {title,description,price,images, category};
+        let data = {
+            title,
+            description,
+            price,
+            images,
+            category,
+            properties: productProperties
+        };
+        data.category == '' ? data.category = null : data.category
+        console.log(data);
         if(_id) {
             // Update existing data
             await axios.put('/api/products', {...data, _id})
@@ -66,7 +74,7 @@ export default function ProductForm(
         }
     }
     function goBack(){
-        setGoToProducts(true);
+        router.back()
     }
     function updateImagesOrder(images){
         setImages(images);
@@ -75,13 +83,24 @@ export default function ProductForm(
     let propertiesToFill = [];
     if (categories.length > 0 && category){
         let catInfo = categories.find(({_id}) => _id === category)
-        propertiesToFill.push(...catInfo.properties);
+        catInfo && propertiesToFill.push(...catInfo.properties);
         while(catInfo?.parent?._id){
             const parentCategory = categories.find(({_id}) => _id === catInfo?.parent?._id)
             propertiesToFill.push(...parentCategory.properties)
             catInfo = parentCategory;
         }
+        console.log('propertiesToFill',propertiesToFill);
     }
+
+    function setProductProp(propName, value){
+        setProductProperties(prev => {
+            const newProductProps = {...prev}
+            newProductProps[propName] = value;
+            console.log(newProductProps);
+            return newProductProps;
+        })
+    }
+    
     return (
         <form onSubmit={saveProduct} action="">
             <label >Product name</label>
@@ -97,20 +116,30 @@ export default function ProductForm(
                     <option key={i} value={c._id}>{c.name}</option>
                 ))}
             </select>
-            {propertiesToFill.length > 0 && propertiesToFill.map((p,i)=>(
-                <div key={i}>
-                    {toUpperCaseFirst(p.name)}
+            {propertiesToFill.length > 0 && propertiesToFill.map((p,i)=>{
+                return <div key={i} className="flex gap-2">
+                    <div className="w-3/12">
+                        {toUpperCaseFirst(p.name) + ":"}
+                    </div>
+                    <select type="text"
+                        value={productProperties[p.name]}
+                        onChange={(ev) => setProductProp(p.name, ev.target.value)}>
+                        <option value=''></option>
+                        {p.values.map((v, i)=>(
+                            <option key={i} value={v}>{toUpperCaseFirst(v)}</option>
+                        ))}
+                    </select>
                 </div>
-            ))}
-            <label>Photos</label>
+            })}
+            <label className="">Photos</label>
             <div className="flex flex-wrap mb-2 gap-2">
-                {/* <ReactSortable className="flex flex-wrap gap-1" list={images} setList={updateImagesOrder}>
-                    {!!images?.length && images.map(link => {
+                <ReactSortable className="flex flex-wrap gap-1" list={images} setList={updateImagesOrder}>
+                    {!!images?.length && images.map((link, index) => {
                         link = link.toString();
-                        return <Image key={link} src={link} width={100} height={100} className="w-24 h-24 object-cover rounded border" alt="productPicture"></Image>
+                        return <Image key={index} src={link} width={100} height={100} className="w-24 h-24 object-cover rounded border " alt="productPicture"></Image>
                     })}
-                </ReactSortable> */}
-                <label className={"bg-gray-200 hover:bg-gray-300 relative w-24 h-24 cursor-pointer rounded"+(isUploading?' bg-lime-100 hover:bg-lime-200':'')}>
+                </ReactSortable>
+                <label className={"bg-blue-50 hover:bg-blue-100 relative w-24 h-24 cursor-pointer rounded hover:shadow-sm"+(isUploading?' bg-lime-100 hover:bg-lime-200':'')}>
                     {isUploading
                         ? (
                             <div className="flex flex-col justify-center items-center gap-1 text-sm text-gray-600 h-full">
@@ -119,11 +148,11 @@ export default function ProductForm(
                             </div>
                         )
                         : (
-                            <div className="flex flex-col justify-center items-center gap-1 text-sm text-gray-600 h-full">
+                            <div className="flex flex-col justify-center items-center gap-1 text-sm text-blue-600 h-full">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
                                     <path strokeLinecap="round" strokeLinejoin="round" d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15" />
                                 </svg>
-                                <span>Upload</span>
+                                <span>Add image</span>
                             </div>
                     )
                     }

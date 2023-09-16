@@ -1,22 +1,27 @@
 import ActionButton from "@/components/actionButton";
 import Layout from "@/components/layout"
+import TableSkeleton from "@/components/tableSkeleton";
 import axios from "axios";
 import { useEffect, useState } from "react"
+import Skeleton from "react-loading-skeleton";
 import { withSwal } from "react-sweetalert2";
 
 function Categories({swal}) {
+    const [isLoading, setIsLoading] = useState(false)
     const [name, setName] = useState('');
     const [editedCategory, setEditedCategory] = useState(null)
     const [categories, setCategories] = useState([]);
     const [parentCategory, setParentCategory] = useState('');
     const [properties, setProperties] = useState([])
     useEffect(() => {
-        fetchCategories()
+        setIsLoading(true);
+        fetchCategories();
     },[])
-    function fetchCategories(){
-        axios.get('/api/categories').then(result => {
+    async function fetchCategories(){
+        await axios.get('/api/categories').then(result => {
             setCategories(result.data);
         })
+        setIsLoading(false);
     }
     async function saveCategory(ev){
         ev.preventDefault();
@@ -89,13 +94,22 @@ function Categories({swal}) {
     function handlePropertyValueChange(index, property, newValue){
         setProperties(prev => {
             const properties = [...prev];
-            properties[index].values = newValue;
+            properties[index].values = newValue.split(',');
+            console.log(properties);
             return properties;
         })
     }
     function removeProperty(index, property){
-        console.log(property)
-        swal.fire({
+        const removeItem = (index) => setProperties(prev => {
+            const newProperties = [...prev];
+            newProperties.splice(index,1)
+            return newProperties
+        })
+        console.log(property);
+        if(property.name == '' && property.values == '') {
+            removeItem(index)
+        }
+        else swal.fire({
             title: 'Are you sure?',
             text: `Do you want to delete ${property.name}`,
             icon: 'warning',
@@ -106,11 +120,7 @@ function Categories({swal}) {
             reverseButtons: true,
         }).then(result => {
             if (result.isConfirmed) {
-                setProperties(prev => {
-                    const newProperties = [...prev];
-                    newProperties.splice(index,1)
-                    return newProperties
-                })
+                removeItem(index)
             }
         });
     }
@@ -182,21 +192,23 @@ function Categories({swal}) {
                     <button type="submit" className="btn-primary py-1">Save</button>
                 </div>
             </form>
+            
         {!editedCategory && 
         <table className="basic mt-4">
             <thead>
                 <tr>
-                    <td>Category name</td>
+                    <td className="w-1/2">Category name</td>
                     <td>Parent Category</td>
-                    <td>Action</td>
+                    <td></td>
                 </tr>
             </thead>
             <tbody>
+                <TableSkeleton row={10} column={3} loading={isLoading} />
                 {categories.length > 0 && categories.map((category, index) => (
                     <tr key={index}>
                         <td>{category.name}</td>
                         <td>{category?.parent?.name}</td>
-                        <td>
+                        <td className="text-right">
                             <ActionButton type='edit' onClick={()=> editCategory(category)}>Edit</ActionButton>
                             <ActionButton type='delete' onClick={()=> deleteCategory(category)}>Delete</ActionButton>
                         </td>

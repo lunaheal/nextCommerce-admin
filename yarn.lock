@@ -4790,7 +4790,12 @@
     "typical" "^5.2.0"
     "wordwrapjs" "^4.0.0"
 
-"tailwindcss@npm:@tailwindcss/postcss7-compat":
+"tailwindcss-pseudo-elements@^2.0.0":
+  "integrity" "sha512-cbnF8Rg1tJjsgrUK1sLt/TNAea9zKNhWGTI5NtKxZ8WhYjHCMAGOjaHg+iql8UlXaW1U9jPeyJsGlQsLGrbomQ=="
+  "resolved" "https://registry.npmjs.org/tailwindcss-pseudo-elements/-/tailwindcss-pseudo-elements-2.0.0.tgz"
+  "version" "2.0.0"
+
+"tailwindcss@>=1.0.0", "tailwindcss@npm:@tailwindcss/postcss7-compat":
   "integrity" "sha512-3h2svqQAqYHxRZ1KjsJjZOVTQ04m29LjfrLjXyZZEJuvUuJN+BCIF9GI8vhE1s0plS0mogd6E6YLg6mu4Wv/Vw=="
   "resolved" "https://registry.npmjs.org/@tailwindcss/postcss7-compat/-/postcss7-compat-2.2.17.tgz"
   "version" "2.2.17"

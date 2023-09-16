@@ -2,11 +2,14 @@ import clientPromise from "@/lib/mongodb";
 import { mongooseConnect } from "@/lib/mongoose";
 import { Product } from "@/models/Products";
 import mongoose from "mongoose";
+import { isAdminRequest } from "./auth/[...nextauth]";
 
 export default async function handle(req, res){
     const {method} = req;
     await mongooseConnect();
     mongoose.Promise = clientPromise;
+    
+    await isAdminRequest(req,res);
     if (method === 'GET') {
         if(req.query?.id){
             res.json(await Product.findOne({_id:req.query.id}))
@@ -15,15 +18,15 @@ export default async function handle(req, res){
         }
     }
     if(method === 'POST') {
-        const {title,description,price,images, category} = req.body;
+        const {title,description,price,images, category, properties} = req.body;
         const productDoc = await Product.create({
-            title,description,price,images, category
+            title,description,price,images, category, properties
         })
         res.json(productDoc);
     }
     if(method === 'PUT') {
-        const {title,description,price,images, category, _id} = req.body;
-        await Product.updateOne({_id}, {title,description,price,images, category})
+        const {title,description,price,images, category, properties, _id} = req.body;
+        await Product.updateOne({_id}, {title,description,price,images, category, properties})
         res.json(true);
     }
     if (method === 'DELETE') {
