@@ -28,6 +28,7 @@ export default function ProductForm(
     const [productProperties, setProductProperties] = useState(assignedProperties || {});
     const [description, setDescription] = useState(existingDescription || '');
     const [price, setPrice] = useState(existingPrice || '');
+    const [mainImage, setMainImage] = useState('');
     const [images, setImages] = useState(existingImages || []);
     // ----- UI handle -----
     const [isUploading, setIsUploading] = useState(false);
@@ -132,14 +133,19 @@ export default function ProductForm(
                 </div>
             })}
             <label className="">Photos</label>
-            <div className="flex flex-wrap mb-2 gap-2">
+            <div className="flex  mb-2 gap-2">
+                {mainImage && <img src={mainImage} className="w-80 h-80 object-contain"/>}
+                <div className="flex">
                 <ReactSortable className="flex flex-wrap gap-1" list={images} setList={updateImagesOrder}>
                     {!!images?.length && images.map((link, index) => {
                         link = link.toString();
-                        return <Image key={index} src={link} width={100} height={100} className="w-24 h-24 object-cover rounded border " alt="productPicture"></Image>
+                        return <button type="button" key={index} src={link} onClick={() => setMainImage(link)}>
+                            <Image key={index} src={link} width={100} height={100} className="object-cover rounded border " alt="productPicture"></Image>
+                        </button>
+                            
                     })}
                 </ReactSortable>
-                <label className={"bg-blue-50 hover:bg-blue-100 relative w-24 h-24 cursor-pointer rounded hover:shadow-sm"+(isUploading?' bg-lime-100 hover:bg-lime-200':'')}>
+                <label className={"bg-blue-50 hover:bg-blue-100 relative w-24 h-max cursor-pointer rounded hover:shadow-sm"+(isUploading?' bg-lime-100 hover:bg-lime-200':'')}>
                     {isUploading
                         ? (
                             <div className="flex flex-col justify-center items-center gap-1 text-sm text-gray-600 h-full">
@@ -161,6 +167,7 @@ export default function ProductForm(
                 {
                     (!images?.length && isUploading) && <div className="mb-1">No photos in this products</div>
                 }
+                </div>
             </div>
             <label >Description</label>
             <textarea 

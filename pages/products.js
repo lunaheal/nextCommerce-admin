@@ -45,27 +45,25 @@ export default function Products(){
                 </Link>
             </div>
             
-            <p className="w-min-content relative transition-all
+            <p className="content-before content-after content-hover-before w-min-content relative transition-all
                 before::absolute before::bottom-0 before::right-0
                 before::h-1 before::w-0 before::bg-blue-400
                 before::transition-all before::duration-500
                 hover:before::left-0 hover:before::w-full hover:before::bg-red-500">Underline</p>
-<div className="before:content-['hello\_world']">
-            <p
-  className="w-min-content relative transition-all
-                before::absolute before::bottom-0 before::right-0
-                before::h-1 before::w-0 before::bg-blue-400
-                before::transition-all before::duration-500
-                hover:before::left-0 hover:before::w-full hover:before::bg-red-500 content-before content-after content-hover-before background-hover-before"
-  tw-background-hover-before="bg-blue-50"
-  tw-content-before="🧡"
-  tw-content-hover-before="💖"
-  tw-content-after="💙️"
->
-  Tailwind CSS
-</p>
 
-</div>
+            <p className="content-before content-after content-hover-before background-hover-before
+            relative
+            before:inline-block 
+            before:w-12
+            before:h-6
+            before:opacity-50
+            before:bg-red-500 before:top-0 before:content-[''] before:absolute
+            hover:before:opacity-0
+            "
+             >
+            Tailwind CSS
+            </p>
+
             {/* <ClipLoader color='#000000' loading={isLoading} size={20} aria-label="Loading Spinner" data-testId="loader" className=""></ClipLoader> */}
             <table className="basic mt-2">
                 <thead>
