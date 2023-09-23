@@ -45,11 +45,12 @@ export default function Products(){
                 </Link>
             </div>
             
-            <p className="content-before content-after content-hover-before w-min-content relative transition-all
-                before::absolute before::bottom-0 before::right-0
-                before::h-1 before::w-0 before::bg-blue-400
-                before::transition-all before::duration-500
-                hover:before::left-0 hover:before::w-full hover:before::bg-red-500">Underline</p>
+            <p className="content-before content-after content-hover-before
+                w-min-content relative transition-all
+                before:absolute before:bottom-0 before:right-0
+                before:h-1 before:w-0 before:bg-blue-400
+                before:transition-all before:duration-500
+                hover:before:left-0 hover:before:w-full hover:before:bg-red-500">Underline</p>
 
             <p className="content-before content-after content-hover-before background-hover-before
             relative
@@ -68,8 +69,8 @@ export default function Products(){
             <table className="basic mt-2">
                 <thead>
                     <tr>
-                        <td className="w-1/2">Product name</td>
-                        <td className="w-1/4">Cate name</td>
+                        <td className="w-5/12">Product name</td>
+                        <td className="">Cate name</td>
                         <td className="">Price</td>
                         <td></td>
                     </tr>
@@ -83,7 +84,7 @@ export default function Products(){
                                 {renderCategory(product)}
                             </td>
                             <td className="">
-                                <span className="bg-yellow-400 p-1 mr-1 rounded text-white font-bold">$</span>{product.price}
+                                <span className="bg-lime-100 mr-1 px-1 rounded text-lime-400">USD</span>{product.price}
                             </td>
                             <td className="text-right">
                                 <Link href={'/products/edit/'+product._id}>

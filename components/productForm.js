@@ -133,14 +133,14 @@ export default function ProductForm(
                 </div>
             })}
             <label className="">Photos</label>
-            <div className="flex  mb-2 gap-2">
-                {mainImage && <img src={mainImage} className="w-80 h-80 object-contain"/>}
-                <div className="flex">
+            {mainImage && <img src={mainImage} className="w-80 h-80 object-contain"/>}
+            <div className="flex mb-2 gap-2">
+                <div className="flex gap-1">
                 <ReactSortable className="flex flex-wrap gap-1" list={images} setList={updateImagesOrder}>
                     {!!images?.length && images.map((link, index) => {
                         link = link.toString();
-                        return <button type="button" key={index} src={link} onClick={() => setMainImage(link)}>
-                            <Image key={index} src={link} width={100} height={100} className="object-cover rounded border " alt="productPicture"></Image>
+                        return <button type="button" key={index} src={link} onClick={() => setMainImage(link)} className="object-cover rounded-md border hover:shadow-sm border-gray-100">
+                            <Image key={index} src={link} width={100} height={100}  alt="productPicture"></Image>
                         </button>
                             
                     })}
